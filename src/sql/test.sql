@@ -1,0 +1,1 @@
+insert into test values('mizan', 1);
