@@ -3,3 +3,8 @@ total 16
 -rw-r--r--  1 mac  staff   2.3K Jul 16 00:11 git-alias.txt
 -rw-r--r--  1 mac  staff     0B Jul 16 00:07 hotfix.txt
 -rw-r--r--  1 mac  staff     0B Jul 16 00:11 ll.txt
+total 24
+-rw-r--r--  1 mac  staff    11B Jul 15 23:21 README.md
+-rw-r--r--  1 mac  staff   2.3K Jul 16 00:12 git-alias.txt
+-rw-r--r--  1 mac  staff     0B Jul 16 00:07 hotfix.txt
+-rw-r--r--  1 mac  staff   231B Jul 16 00:12 ll.txt
