@@ -1,0 +1,60 @@
+ai = add --interactive
+amend = commit --amend
+assume = update-index --assume-unchanged
+assumeall = !git st -s | awk {'print $2'} | xargs git assume
+assumed = !git ls-files -v | grep ^h | cut -c 3-
+br = branch
+bra = branch -ra
+branch = branch -ra
+ca = commit --amend
+caa = commit -a --amend -C HEAD
+cam = !git add -A && git commit
+cb = checkout -b
+ci = commit
+cl = clone
+cm = commit -m
+cma = commit -a -m
+co = checkout
+cp = cherry-pick
+d = diff --word-diff
+dc = diff --cached
+diff = diff --word-diff
+diffr = !f() { git diff $1^..$1; }; f
+dlc = diff --cached HEAD^
+done = !f() { git branch | grep $1 | cut -c 3- | grep -v done | xargs -I{} git branch -m {} done-{}; }; f
+dr = !f() { git diff -w $1^..$1; }; f
+empty = !git commit -am"[empty] Initial commit" --allow-empty
+f = !git ls-files | grep -i
+filelog = log -u
+fl = log -u
+gr = grep -Ii
+gra = !f() { A=$(pwd) && TOPLEVEL=$(git rev-parse --show-toplevel) && cd $TOPLEVEL && git grep --full-name -In $1 | xargs -I{} echo $TOPLEVEL/{} && cd $A; }; f
+grep = grep -Ii
+la = !git config -l | grep alias | cut -c 7-
+lap = !f() { git --git-dir=$1 format-patch -k -1 --stdout $2 | git am -3 -k; }; f
+last = !gvim $(git show HEAD --format= --name-only | xargs)
+lasttag = describe --tags --abbrev=0
+lc = !f() { git ll $1^..$1; }; f
+ll = log --pretty=format:%C(yellow)%h%Cred%d\ %Creset%s%Cblue\ [%cn] --decorate --numstat
+lnc = log --pretty=format:%h\ %s\ [%cn]
+ls = log --pretty=format:%C(green)%h\ %C(yellow)[%ad]%Cred%d\ %Creset%s%Cblue\ [%cn] --decorate --date=relative
+lt = describe --tags --abbrev=0
+oldest-ancestor = !zsh -c 'diff -u <(git rev-list --first-parent "${1:-master}") <(git rev-list --first-parent "${2:-HEAD}") | sed -ne "s/^ //p" | head -1' -
+ours = !f() { git co --ours $@ && git add $@; }; f
+r = reset
+r1 = reset HEAD^
+r2 = reset HEAD^^
+ra = !f() { git remote add $1 https://bitbucket.org/$2.git; }; f
+rem = !git config -l | grep remote.*url | tail -n +2
+rh = reset --hard
+rh1 = reset HEAD^ --hard
+rh2 = reset HEAD^^ --hard
+sa = stash apply
+sba = !f() { git subtree add --prefix $2 $1 master --squash; }; f
+sbu = !f() { git subtree pull --prefix $2 $1 master --squash; }; f
+sl = stash list
+ss = stash save
+st = status -s
+theirs = !f() { git co --theirs $@ && git add $@; }; f
+unassume = update-index --no-assume-unchanged
+unassumeall = !git assumed | xargs git update-index --no-assume-unchanged
