@@ -1,12 +1,14 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    java-properties (0.1.1)
     rake (11.2.2)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  java-properties
   rake
 
 BUNDLED WITH

@@ -1,5 +1,5 @@
 require 'date'
-
+require 'java-properties'
 desc 'release with all features'
 task :release =>[:fork_release, :merge] do
 
@@ -27,25 +27,52 @@ task :merge, [:feature] do |t, args|
 	psystem "git pull origin #{args[:feature]}"
 end
 
-desc "enlist sql file changes"
-task :sql_changes, :from do |t, args|
+desc "Flyway migration script changes"
+task :migration_scripts, :from do |t, args|
 	# psystem "git checkout develop"
-	puts "git diff #{args[:from]} --name-only server-config/db"
+
+	puts "Flyway migration script changes"
+	puts "==============================="
+	psystem "git diff #{args[:from]} --name-only server-config/sql"
+end
+
+desc "Post flyway migration script changes"
+task :manual_sqls, :from do |t, args|
+	# psystem "git checkout develop"
+	
+	puts "Post flyway sql script changes"
+	puts "==============================="
+	psystem "git diff #{args[:from]} --name-only server-config/post-flyway"
 end
 
 desc "enlist config file changes"
 task :config_changes, [:from] do |t, args|
 	puts "git checkout develop"
-	puts "git diff #{args[:from]} --name-only server-config/wildfly"
+
+	puts "Configuration script changes"
+	puts "==============================="
+	psystem "git diff #{args[:from]} --name-only server-config/config"
 end
 
 
-desc "Task description"
-task :task_name => [:dependent, :tasks] do
-	
+desc "enlist config file changes"
+task :migrate_version, [:primary, :major, :minor] do |t, args|
+	properties = JavaProperties.load("version.properties")
+	# puts properties[:primary] # => "bar"
+	# prim = gets
+	properties[:primary] = args[:primary]
+	properties[:major] = args[:major]
+	properties[:minor] = args[:minor]
+	JavaProperties.write(properties, "version.properties")
+	psystem "git add ."
+	psystem "git commit -m 'version upgraded'"
 end
 
-task :build do |t, args|
-	puts "#{ENV['ok']}"
-  puts "Current env is #{ENV['ok']}"
+
+desc "it does a thing"
+task :work, [:option] => [:environment] do |t, args|
+	puts args
+	puts args[:option]
 end
+
+
