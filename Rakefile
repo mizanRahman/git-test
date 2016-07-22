@@ -58,8 +58,6 @@ end
 desc "enlist config file changes"
 task :migrate_version, [:primary, :major, :minor] do |t, args|
 	properties = JavaProperties.load("version.properties")
-	# puts properties[:primary] # => "bar"
-	# prim = gets
 	properties[:primary] = args[:primary]
 	properties[:major] = args[:major]
 	properties[:minor] = args[:minor]
@@ -67,6 +65,60 @@ task :migrate_version, [:primary, :major, :minor] do |t, args|
 	psystem "git add ."
 	psystem "git commit -m 'version upgraded'"
 end
+
+desc "tag a repository"
+task :rc_tag, [:version] do |t, args|
+	psystem "git tag v#{args[:version]}-rc"
+	psystem "git push --tags"
+end
+
+desc "tag a repository"
+task :stable_tag, [:version] do |t, args|
+	psystem "git tag v#{args[:version]}"
+	psystem "git push --tags"
+end
+
+# rake 'hq_tag[2.3.4]'
+desc "tag hq repository"
+task :hq_rc_tag, [:version] do |t, args|
+	repos = ['psm', 'kona-secret']
+	repos.each do |item|
+		psystem "cd #{item}"
+		psystem "git tag v#{args[:version]}-rc"
+		psystem "git push --tags"
+		psystem "cd -"
+	end 
+end
+
+# rake 'hq_stable_tag[2.3.4]'
+desc "stable tag hq repository"
+task :hq_stable_tag, [:version] do |t, args|
+	repos = ['psm', 'kona-secret']
+	repos.each do |item|
+		psystem "cd #{item}"
+		psystem "git tag v#{args[:version]}"
+		psystem "git push --tags"
+		psystem "cd -"
+
+	end 
+end
+
+
+# rake 'all_rc_tag[2.3.4]'
+desc "stable all repository"
+task :stable_tag, [:version] => [:hq_stable_tag] do |t, args|
+	repos = ['kona-paypaas']
+	repos.each do |item|
+		psystem "cd #{item}"
+		psystem "git tag v#{args[:version]}"
+		psystem "git push --tags"
+		psystem "cd -"
+
+	end 
+end
+
+
+
 
 
 desc "it does a thing"
