@@ -29,7 +29,7 @@ end
 
 desc "enlist sql file changes"
 task :sql_changes, :from do |t, args|
-	ppsystem "git checkout develop"
+	# psystem "git checkout develop"
 	puts "git diff #{args[:from]} --name-only server-config/db"
 end
 
