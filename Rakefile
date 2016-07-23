@@ -1,15 +1,13 @@
 require 'date'
 require 'java-properties'
-desc 'release with all features'
-task :release =>[:fork_release, :merge] do
 
-end
 
 
 def psystem(command)
 	puts command
 	system command
 end
+
 
 # lib/tasks/migrate_topics.rake
 desc 'merge feature branch to develop'
@@ -21,14 +19,14 @@ task :fork_release, [:version] do |t, args|
 end
 
 desc 'merge feature branch to develop'
-task :merge, [:feature] do |t, args|
+task :merge, [:branch] do |t, args|
 	psystem "git checkout develop"
 	psystem "git pull"
-	psystem "git pull origin #{args[:feature]}"
+	psystem "git pull origin #{args[:branch]}"
 end
 
 desc "Flyway migration script changes"
-task :migration_scripts, :from do |t, args|
+task :migrations, :from do |t, args|
 	# psystem "git checkout develop"
 
 	puts "Flyway migration script changes"
@@ -37,7 +35,7 @@ task :migration_scripts, :from do |t, args|
 end
 
 desc "Post flyway migration script changes"
-task :manual_sqls, :from do |t, args|
+task :sqls, :from do |t, args|
 	# psystem "git checkout develop"
 	
 	puts "Post flyway sql script changes"
@@ -46,7 +44,7 @@ task :manual_sqls, :from do |t, args|
 end
 
 desc "enlist config file changes"
-task :config_changes, [:from] do |t, args|
+task :configs, [:from] do |t, args|
 	puts "git checkout develop"
 
 	puts "Configuration script changes"
@@ -66,17 +64,17 @@ task :migrate_version, [:primary, :major, :minor] do |t, args|
 	psystem "git commit -m 'version upgraded'"
 end
 
-desc "tag a repository"
-task :rc_tag, [:version] do |t, args|
-	psystem "git tag v#{args[:version]}-rc"
-	psystem "git push --tags"
-end
+# desc "tag a repository"
+# task :rc_tag, [:version] do |t, args|
+# 	psystem "git tag v#{args[:version]}-rc"
+# 	psystem "git push --tags"
+# end
 
-desc "tag a repository"
-task :stable_tag, [:version] do |t, args|
-	psystem "git tag v#{args[:version]}"
-	psystem "git push --tags"
-end
+# desc "tag a repository"
+# task :stable_tag, [:version] do |t, args|
+# 	psystem "git tag v#{args[:version]}"
+# 	psystem "git push --tags"
+# end
 
 # rake 'hq_tag[2.3.4]'
 desc "tag hq repository"
@@ -84,6 +82,11 @@ task :hq_rc_tag, [:version] do |t, args|
 	repos = ['psm', 'kona-secret']
 	repos.each do |item|
 		psystem "cd #{item}"
+
+		psystem "git checkout master"
+		psystem "git pull"
+
+
 		psystem "git tag v#{args[:version]}-rc"
 		psystem "git push --tags"
 		psystem "cd -"
@@ -96,10 +99,11 @@ task :hq_stable_tag, [:version] do |t, args|
 	repos = ['psm', 'kona-secret']
 	repos.each do |item|
 		psystem "cd #{item}"
+		psystem "git checkout master"
+		psystem "git pull"
 		psystem "git tag v#{args[:version]}"
 		psystem "git push --tags"
 		psystem "cd -"
-
 	end 
 end
 
@@ -110,21 +114,31 @@ task :stable_tag, [:version] => [:hq_stable_tag] do |t, args|
 	repos = ['kona-paypaas']
 	repos.each do |item|
 		psystem "cd #{item}"
+		psystem "git checkout develop"
+		psystem "git pull"
 		psystem "git tag v#{args[:version]}"
 		psystem "git push --tags"
 		psystem "cd -"
-
 	end 
 end
 
 
 
-
-
-desc "it does a thing"
-task :work, [:option] => [:environment] do |t, args|
-	puts args
-	puts args[:option]
+desc "Merge Hotfix to release branch"
+task :merge_hotfix,[:branch, :release_branch] => [:merge] do |t, args|
+	psystem "git checkout #{args[:release_branch]}"
+	psystem "git pull"
+	psystem "git pull origin #{args[:branch]}"
+	psystem "git push origin #{args[:release_branch]}"
 end
 
 
+desc "test2"
+task :t2,[:p1] do |t, args|
+	puts "param1: #{args[:p1]}"
+end
+
+desc "test1"
+task :t1,[:p1,:p2] => [:t2] do |t, args|
+	puts "param2: #{args[:p2]}"
+end
