@@ -5,7 +5,7 @@ require 'java-properties'
 
 def psystem(command)
 	puts command
-#	system command
+	system command
 end
 
 
