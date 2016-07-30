@@ -5,7 +5,7 @@ require 'java-properties'
 
 def psystem(command)
 	puts command
-	system command
+	#system command
 end
 
 
@@ -99,43 +99,17 @@ end
 desc "tag hq repository"
 task :hq_rc_tag, [:version] do |t, args|
 	repos = ['psm', 'kona-secret']
-	repos.each do |item|
-		psystem "cd #{item}"
-
-		psystem "git checkout master"
-		psystem "git pull"
-
-
-		psystem "git tag v#{args[:version]}-rc"
-		psystem "git push --tags"
-		psystem "cd -"
-	end 
+	rc_version = args[:version]+'-rc'
+	tag_all repos, rc_version
 end
 
 # rake 'hq_stable_tag[2.3.4]'
 # will tag v2.3.4
-desc "stable tag hq repository"
-task :hq_stable_tag, [:version] do |t, args|
+desc "tag hq repository"
+task :hq_tag, [:version] do |t, args|
 	repos = ['psm', 'kona-secret']
 	tag_all repos, args[:version]
 end
-
-
-# rake 'all_rc_tag[2.3.4]'
-desc "stable all repository"
-task :stable_tag, [:version] => [:hq_stable_tag] do |t, args|
-	repos = ['kona-paypaas']
-	repos.each do |item|
-		psystem "cd #{item}"
-		psystem "git checkout develop"
-		psystem "git pull"
-		psystem "git tag v#{args[:version]}"
-		psystem "git push --tags"
-		psystem "cd -"
-	end 
-end
-
-
 
 desc "Merge Hotfix to release branch"
 task :merge_hotfix,[:branch, :release_branch] => [:merge] do |t, args|
