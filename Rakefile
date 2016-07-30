@@ -64,6 +64,23 @@ task :migrate_version, [:primary, :major, :minor] do |t, args|
 	psystem "git commit -m 'version upgraded'"
 end
 
+
+def tag(repo, version)
+		psystem "cd #{repo}"
+		psystem "git checkout master"
+		psystem "git pull"
+		psystem "git tag v#{version}"
+		psystem "git push --tags"
+		psystem "cd -"
+end 
+
+
+def tag_all(repos, version) 
+	repos.each do |repo|
+		tag(repo,version)
+	end 
+end
+
 # desc "tag a repository"
 # task :rc_tag, [:version] do |t, args|
 # 	psystem "git tag v#{args[:version]}-rc"
@@ -77,6 +94,8 @@ end
 # end
 
 # rake 'hq_tag[2.3.4]'
+# will tag v2.3.34-rc
+
 desc "tag hq repository"
 task :hq_rc_tag, [:version] do |t, args|
 	repos = ['psm', 'kona-secret']
@@ -94,17 +113,11 @@ task :hq_rc_tag, [:version] do |t, args|
 end
 
 # rake 'hq_stable_tag[2.3.4]'
+# will tag v2.3.4
 desc "stable tag hq repository"
 task :hq_stable_tag, [:version] do |t, args|
 	repos = ['psm', 'kona-secret']
-	repos.each do |item|
-		psystem "cd #{item}"
-		psystem "git checkout master"
-		psystem "git pull"
-		psystem "git tag v#{args[:version]}"
-		psystem "git push --tags"
-		psystem "cd -"
-	end 
+	tag_all repos, args[:version]
 end
 
 
@@ -141,4 +154,15 @@ end
 desc "test1"
 task :t1,[:p1,:p2] => [:t2] do |t, args|
 	puts "param2: #{args[:p2]}"
+end
+
+# Rakefile
+directory "db"
+	file "db/my.db" do
+	  sh "echo 'Hello db' > db/my.db"
+	end
+
+
+task :report => "db/my.db" do 
+	puts "ik"
 end
