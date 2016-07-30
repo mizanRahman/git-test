@@ -5,7 +5,7 @@ require 'java-properties'
 
 def psystem(command)
 	puts command
-	#system command
+	system command
 end
 
 
@@ -60,9 +60,17 @@ task :migrate_version, [:primary, :major, :minor] do |t, args|
 	properties[:major] = args[:major]
 	properties[:minor] = args[:minor]
 	JavaProperties.write(properties, "version.properties")
-	psystem "git add ."
+	psystem "git add ."	
 	psystem "git commit -m 'version upgraded'"
 end
+
+desc "open vi editor and record new version"
+task :version_upgrate do |t, args|
+	psystem "vi version.gradle"
+	psystem "git add ."	
+	psystem "git commit -m 'version upgraded'"
+end
+
 
 
 def tag(repo, version)
