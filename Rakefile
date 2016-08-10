@@ -202,4 +202,6 @@ task :demo, [:version] do |t, args|
 	end
 end
 
+##
+# git archive --output=export1.zip HEAD $(git diff --name-only --diff-filter=A HEAD~1 HEAD)
 
