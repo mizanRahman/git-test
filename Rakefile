@@ -4,7 +4,7 @@ require 'java-properties'
 
 def psystem(command)
 	puts command
-	# system command
+	system command
 end
 
 def tag_head(version)
@@ -14,16 +14,18 @@ def tag_head(version)
 end
 
 def tag(repo, version, main_branch)
-		psystem "cd #{repo}"
+		# psystem "cd #{repo}"
 		psystem "git checkout #{main_branch}"
 		tag_head version
-		psystem "cd -"
+		# psystem "cd -"
 end 
 
 def tag_all(repos, version, main_branch='develop') 
 	repos.each do |repo|
-		tag(repo,version, main_branch)
-	end 
+		Dir.chdir(repo) do
+			tag(repo,version, main_branch)
+		end
+	end
 end
 
 def tag_rc_all(repos, version, main_branch='develop') 
@@ -186,3 +188,18 @@ end
 # task :report => "db/my.db" do 
 # 	puts "ik"
 # end
+
+
+desc 'just a test'
+task :demo, [:version] do |t, args|
+	repos = ["repositories/app", "repositories/kpp"]
+	repos.each do |repo|
+		Dir.chdir(repo) do
+			psystem "pwd"
+			psystem "git status"
+			psystem "git log -1"
+		end
+	end
+end
+
+
