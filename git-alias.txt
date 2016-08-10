@@ -26,6 +26,7 @@ dr = !f() { git diff -w $1^..$1; }; f
 empty = !git commit -am"[empty] Initial commit" --allow-empty
 f = !git ls-files | grep -i
 filelog = log -u
+
 fl = log -u
 gr = grep -Ii
 gra = !f() { A=$(pwd) && TOPLEVEL=$(git rev-parse --show-toplevel) && cd $TOPLEVEL && git grep --full-name -In $1 | xargs -I{} echo $TOPLEVEL/{} && cd $A; }; f

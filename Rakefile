@@ -48,9 +48,7 @@ end
 # lib/tasks/migrate_topics.rake
 desc 'merge feature branch to develop'
 task :fork_release, [:version] do |t, args|
-	psystem "git tag before-release-#{args[:version]}-#{Time.now.to_i}"
-	psystem 'git tag'
-	psystem "git checkout -b release/release-#{args[:version]} origin/develop"
+	psystem "git checkout -b release/release-#{args[:version]}"
 	puts 'release branch forked'
 end
 
@@ -100,7 +98,6 @@ task :version_upgrate do |t, args|
 	psystem "vi version.gradle"
 	psystem "git add ."	
 	psystem "git commit -m 'version upgraded'"
-	# psystem "git push origin #{args[:release_branch]}" # should push to current branch
 end
 
 
@@ -152,8 +149,20 @@ task :merge_hotfix,[:branch, :release_branch] => [:merge] do |t, args|
 	psystem "git push origin #{args[:release_branch]}"
 end
 
+
+desc "push branches"
+task :push, [:version] do |t, args|
+	branches = ['develop', "release/release-#{args.version}"]
+	branches.each do |branch|
+		psystem "git checkout #{branch}"
+		psystem "git pull"
+		psystem "git push origin #{branch}"
+	end 
+end
+
+
 desc "Release"
-task :release, [:version, :from] => [:version_upgrate, :fork_release, :configs, :migrations, :sqls, :tag_rc_all] do |t, args|
+task :release, [:version, :from] => [:version_upgrate, :fork_release, :configs, :migrations, :sqls, :tag_rc_all, :push] do |t, args|
 	
 end
 
